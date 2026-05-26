@@ -133,6 +133,7 @@ private:
     bool resumeAutoUpdateAfterEdit;
     bool pendingUiRefreshAfterEdit;
     bool pendingTablesRefresh;
+    bool isInternalCellUpdate;
     System::Object^ portLock;
     System::Windows::Forms::GroupBox^ groupBoxLiveValues;
     System::Windows::Forms::Label^ labelLiveDensityCaption;
@@ -212,4 +213,6 @@ private:
     void dataGridViewRegisters_CellEndEdit(System::Object^ sender, System::Windows::Forms::DataGridViewCellEventArgs^ e);
     void PauseAutoUpdateForEditing();
     void ResumeAutoUpdateAfterEditing();
+private: System::Void labelSlaveID_Click(System::Object^ sender, System::EventArgs^ e) {
+}
 };

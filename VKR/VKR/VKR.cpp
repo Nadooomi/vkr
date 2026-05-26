@@ -132,7 +132,11 @@ void ModbusMasterForm::InitializeComponent()
     this->groupBoxPort = (gcnew System::Windows::Forms::GroupBox());
     this->labelSlaveID = (gcnew System::Windows::Forms::Label());
     this->numericSlaveID = (gcnew System::Windows::Forms::NumericUpDown());
+    this->labelAutoUpdateStatus = (gcnew System::Windows::Forms::Label());
     this->checkBoxShowAll = (gcnew System::Windows::Forms::CheckBox());
+    this->buttonStopAutoUpdate = (gcnew System::Windows::Forms::Button());
+    this->buttonStartAutoUpdate = (gcnew System::Windows::Forms::Button());
+    this->buttonRefreshRegisters = (gcnew System::Windows::Forms::Button());
     this->textBoxScanResult = (gcnew System::Windows::Forms::TextBox());
     this->labelFoundDevices = (gcnew System::Windows::Forms::Label());
     this->labelModelCaption = (gcnew System::Windows::Forms::Label());
@@ -147,11 +151,7 @@ void ModbusMasterForm::InitializeComponent()
     this->dataGridViewRegisters = (gcnew System::Windows::Forms::DataGridView());
     this->dataGridViewParameters = (gcnew System::Windows::Forms::DataGridView());
     this->buttonExport = (gcnew System::Windows::Forms::Button());
-    this->buttonRefreshRegisters = (gcnew System::Windows::Forms::Button());
-    this->buttonStartAutoUpdate = (gcnew System::Windows::Forms::Button());
-    this->buttonStopAutoUpdate = (gcnew System::Windows::Forms::Button());
     this->buttonSendChanges = (gcnew System::Windows::Forms::Button());
-    this->labelAutoUpdateStatus = (gcnew System::Windows::Forms::Label());
     this->groupBoxRegisters = (gcnew System::Windows::Forms::GroupBox());
     this->groupBoxParameters = (gcnew System::Windows::Forms::GroupBox());
     this->saveFileDialog = (gcnew System::Windows::Forms::SaveFileDialog());
@@ -242,20 +242,20 @@ void ModbusMasterForm::InitializeComponent()
     this->groupBoxPort->Controls->Add(this->comboBoxPorts);
     this->groupBoxPort->Controls->Add(this->buttonStartAutoUpdate);
     this->groupBoxPort->Controls->Add(this->buttonScanDevices);
-    this->groupBoxPort->Controls->Add(this->buttonRefreshRegisters);
-    this->groupBoxPort->Controls->Add(this->buttonRefresh);
-    this->groupBoxPort->Controls->Add(this->buttonDisconnect);
-    this->groupBoxPort->Controls->Add(this->buttonConnect);
-    this->groupBoxPort->Controls->Add(this->textBoxScanResult);
-    this->groupBoxPort->Controls->Add(this->labelFoundDevices);
     this->groupBoxPort->Controls->Add(this->labelModelCaption);
-    this->groupBoxPort->Controls->Add(this->labelModelValue);
-    this->groupBoxPort->Controls->Add(this->labelSerialCaption);
-    this->groupBoxPort->Controls->Add(this->labelSerialValue);
-    this->groupBoxPort->Controls->Add(this->labelTypeCaption);
-    this->groupBoxPort->Controls->Add(this->labelTypeValue);
-    this->groupBoxPort->Controls->Add(this->labelSpeedCaption);
     this->groupBoxPort->Controls->Add(this->labelSpeedValue);
+    this->groupBoxPort->Controls->Add(this->buttonRefreshRegisters);
+    this->groupBoxPort->Controls->Add(this->labelSpeedCaption);
+    this->groupBoxPort->Controls->Add(this->buttonRefresh);
+    this->groupBoxPort->Controls->Add(this->labelTypeValue);
+    this->groupBoxPort->Controls->Add(this->buttonDisconnect);
+    this->groupBoxPort->Controls->Add(this->labelTypeCaption);
+    this->groupBoxPort->Controls->Add(this->buttonConnect);
+    this->groupBoxPort->Controls->Add(this->labelSerialValue);
+    this->groupBoxPort->Controls->Add(this->textBoxScanResult);
+    this->groupBoxPort->Controls->Add(this->labelSerialCaption);
+    this->groupBoxPort->Controls->Add(this->labelFoundDevices);
+    this->groupBoxPort->Controls->Add(this->labelModelValue);
     this->groupBoxPort->Location = System::Drawing::Point(12, 12);
     this->groupBoxPort->Name = L"groupBoxPort";
     this->groupBoxPort->Size = System::Drawing::Size(1209, 131);
@@ -266,21 +266,31 @@ void ModbusMasterForm::InitializeComponent()
     // labelSlaveID
     // 
     this->labelSlaveID->AutoSize = true;
-    this->labelSlaveID->Location = System::Drawing::Point(529, 69);
+    this->labelSlaveID->Location = System::Drawing::Point(885, 33);
     this->labelSlaveID->Name = L"labelSlaveID";
     this->labelSlaveID->Size = System::Drawing::Size(120, 20);
     this->labelSlaveID->TabIndex = 12;
     this->labelSlaveID->Text = L"ID устройства:";
+    this->labelSlaveID->Click += gcnew System::EventHandler(this, &ModbusMasterForm::labelSlaveID_Click);
     // 
     // numericSlaveID
     // 
-    this->numericSlaveID->Location = System::Drawing::Point(680, 69);
+    this->numericSlaveID->Location = System::Drawing::Point(909, 91);
     this->numericSlaveID->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 247, 0, 0, 0 });
     this->numericSlaveID->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 0 });
     this->numericSlaveID->Name = L"numericSlaveID";
     this->numericSlaveID->Size = System::Drawing::Size(60, 26);
     this->numericSlaveID->TabIndex = 11;
     this->numericSlaveID->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 0 });
+    // 
+    // labelAutoUpdateStatus
+    // 
+    this->labelAutoUpdateStatus->AutoSize = true;
+    this->labelAutoUpdateStatus->Location = System::Drawing::Point(11, 97);
+    this->labelAutoUpdateStatus->Name = L"labelAutoUpdateStatus";
+    this->labelAutoUpdateStatus->Size = System::Drawing::Size(232, 20);
+    this->labelAutoUpdateStatus->TabIndex = 5;
+    this->labelAutoUpdateStatus->Text = L"Автообновление: выключено";
     // 
     // checkBoxShowAll
     // 
@@ -292,9 +302,40 @@ void ModbusMasterForm::InitializeComponent()
     this->checkBoxShowAll->Text = L"Показывать занятые порты";
     this->checkBoxShowAll->UseVisualStyleBackColor = true;
     // 
+    // buttonStopAutoUpdate
+    // 
+    this->buttonStopAutoUpdate->Enabled = false;
+    this->buttonStopAutoUpdate->Location = System::Drawing::Point(493, 92);
+    this->buttonStopAutoUpdate->Name = L"buttonStopAutoUpdate";
+    this->buttonStopAutoUpdate->Size = System::Drawing::Size(120, 35);
+    this->buttonStopAutoUpdate->TabIndex = 4;
+    this->buttonStopAutoUpdate->Text = L"Автообновление ВЫКЛ";
+    this->buttonStopAutoUpdate->UseVisualStyleBackColor = true;
+    this->buttonStopAutoUpdate->Click += gcnew System::EventHandler(this, &ModbusMasterForm::buttonStopAutoUpdate_Click);
+    // 
+    // buttonStartAutoUpdate
+    // 
+    this->buttonStartAutoUpdate->Location = System::Drawing::Point(367, 92);
+    this->buttonStartAutoUpdate->Name = L"buttonStartAutoUpdate";
+    this->buttonStartAutoUpdate->Size = System::Drawing::Size(120, 35);
+    this->buttonStartAutoUpdate->TabIndex = 3;
+    this->buttonStartAutoUpdate->Text = L"Автообновление ВКЛ";
+    this->buttonStartAutoUpdate->UseVisualStyleBackColor = true;
+    this->buttonStartAutoUpdate->Click += gcnew System::EventHandler(this, &ModbusMasterForm::buttonStartAutoUpdate_Click);
+    // 
+    // buttonRefreshRegisters
+    // 
+    this->buttonRefreshRegisters->Location = System::Drawing::Point(261, 92);
+    this->buttonRefreshRegisters->Name = L"buttonRefreshRegisters";
+    this->buttonRefreshRegisters->Size = System::Drawing::Size(100, 35);
+    this->buttonRefreshRegisters->TabIndex = 2;
+    this->buttonRefreshRegisters->Text = L"Обновить";
+    this->buttonRefreshRegisters->UseVisualStyleBackColor = true;
+    this->buttonRefreshRegisters->Click += gcnew System::EventHandler(this, &ModbusMasterForm::buttonRefreshRegisters_Click);
+    // 
     // textBoxScanResult
     // 
-    this->textBoxScanResult->Location = System::Drawing::Point(803, 60);
+    this->textBoxScanResult->Location = System::Drawing::Point(676, 69);
     this->textBoxScanResult->Multiline = true;
     this->textBoxScanResult->Name = L"textBoxScanResult";
     this->textBoxScanResult->Size = System::Drawing::Size(191, 60);
@@ -304,7 +345,7 @@ void ModbusMasterForm::InitializeComponent()
     // labelFoundDevices
     // 
     this->labelFoundDevices->AutoSize = true;
-    this->labelFoundDevices->Location = System::Drawing::Point(803, 30);
+    this->labelFoundDevices->Location = System::Drawing::Point(676, 30);
     this->labelFoundDevices->Name = L"labelFoundDevices";
     this->labelFoundDevices->Size = System::Drawing::Size(191, 20);
     this->labelFoundDevices->TabIndex = 8;
@@ -314,7 +355,7 @@ void ModbusMasterForm::InitializeComponent()
     // labelModelCaption
     // 
     this->labelModelCaption->AutoSize = true;
-    this->labelModelCaption->Location = System::Drawing::Point(824, 27);
+    this->labelModelCaption->Location = System::Drawing::Point(1011, 30);
     this->labelModelCaption->Name = L"labelModelCaption";
     this->labelModelCaption->Size = System::Drawing::Size(74, 20);
     this->labelModelCaption->TabIndex = 13;
@@ -323,7 +364,7 @@ void ModbusMasterForm::InitializeComponent()
     // labelModelValue
     // 
     this->labelModelValue->AutoSize = true;
-    this->labelModelValue->Location = System::Drawing::Point(954, 27);
+    this->labelModelValue->Location = System::Drawing::Point(1141, 30);
     this->labelModelValue->Name = L"labelModelValue";
     this->labelModelValue->Size = System::Drawing::Size(14, 20);
     this->labelModelValue->TabIndex = 14;
@@ -332,7 +373,7 @@ void ModbusMasterForm::InitializeComponent()
     // labelSerialCaption
     // 
     this->labelSerialCaption->AutoSize = true;
-    this->labelSerialCaption->Location = System::Drawing::Point(824, 52);
+    this->labelSerialCaption->Location = System::Drawing::Point(1011, 55);
     this->labelSerialCaption->Name = L"labelSerialCaption";
     this->labelSerialCaption->Size = System::Drawing::Size(140, 20);
     this->labelSerialCaption->TabIndex = 15;
@@ -341,7 +382,7 @@ void ModbusMasterForm::InitializeComponent()
     // labelSerialValue
     // 
     this->labelSerialValue->AutoSize = true;
-    this->labelSerialValue->Location = System::Drawing::Point(969, 52);
+    this->labelSerialValue->Location = System::Drawing::Point(1156, 55);
     this->labelSerialValue->Name = L"labelSerialValue";
     this->labelSerialValue->Size = System::Drawing::Size(14, 20);
     this->labelSerialValue->TabIndex = 16;
@@ -350,7 +391,7 @@ void ModbusMasterForm::InitializeComponent()
     // labelTypeCaption
     // 
     this->labelTypeCaption->AutoSize = true;
-    this->labelTypeCaption->Location = System::Drawing::Point(824, 77);
+    this->labelTypeCaption->Location = System::Drawing::Point(1011, 80);
     this->labelTypeCaption->Name = L"labelTypeCaption";
     this->labelTypeCaption->Size = System::Drawing::Size(40, 20);
     this->labelTypeCaption->TabIndex = 17;
@@ -359,7 +400,7 @@ void ModbusMasterForm::InitializeComponent()
     // labelTypeValue
     // 
     this->labelTypeValue->AutoSize = true;
-    this->labelTypeValue->Location = System::Drawing::Point(954, 77);
+    this->labelTypeValue->Location = System::Drawing::Point(1141, 80);
     this->labelTypeValue->Name = L"labelTypeValue";
     this->labelTypeValue->Size = System::Drawing::Size(14, 20);
     this->labelTypeValue->TabIndex = 18;
@@ -368,7 +409,7 @@ void ModbusMasterForm::InitializeComponent()
     // labelSpeedCaption
     // 
     this->labelSpeedCaption->AutoSize = true;
-    this->labelSpeedCaption->Location = System::Drawing::Point(824, 102);
+    this->labelSpeedCaption->Location = System::Drawing::Point(1011, 105);
     this->labelSpeedCaption->Name = L"labelSpeedCaption";
     this->labelSpeedCaption->Size = System::Drawing::Size(133, 20);
     this->labelSpeedCaption->TabIndex = 19;
@@ -377,7 +418,7 @@ void ModbusMasterForm::InitializeComponent()
     // labelSpeedValue
     // 
     this->labelSpeedValue->AutoSize = true;
-    this->labelSpeedValue->Location = System::Drawing::Point(954, 102);
+    this->labelSpeedValue->Location = System::Drawing::Point(1141, 105);
     this->labelSpeedValue->Name = L"labelSpeedValue";
     this->labelSpeedValue->Size = System::Drawing::Size(14, 20);
     this->labelSpeedValue->TabIndex = 20;
@@ -404,10 +445,9 @@ void ModbusMasterForm::InitializeComponent()
     this->dataGridViewRegisters->RowHeadersWidth = 62;
     this->dataGridViewRegisters->Size = System::Drawing::Size(556, 491);
     this->dataGridViewRegisters->TabIndex = 0;
-    this->dataGridViewRegisters->CellValueChanged += gcnew System::Windows::Forms::DataGridViewCellEventHandler(this, &ModbusMasterForm::dataGridViewRegisters_CellValueChanged);
     this->dataGridViewRegisters->CellBeginEdit += gcnew System::Windows::Forms::DataGridViewCellCancelEventHandler(this, &ModbusMasterForm::dataGridViewRegisters_CellBeginEdit);
     this->dataGridViewRegisters->CellEndEdit += gcnew System::Windows::Forms::DataGridViewCellEventHandler(this, &ModbusMasterForm::dataGridViewRegisters_CellEndEdit);
-    
+    this->dataGridViewRegisters->CellValueChanged += gcnew System::Windows::Forms::DataGridViewCellEventHandler(this, &ModbusMasterForm::dataGridViewRegisters_CellValueChanged);
     // 
     // dataGridViewParameters
     // 
@@ -433,37 +473,6 @@ void ModbusMasterForm::InitializeComponent()
     this->buttonExport->UseVisualStyleBackColor = true;
     this->buttonExport->Click += gcnew System::EventHandler(this, &ModbusMasterForm::buttonExport_Click);
     // 
-    // buttonRefreshRegisters
-    // 
-    this->buttonRefreshRegisters->Location = System::Drawing::Point(261, 92);
-    this->buttonRefreshRegisters->Name = L"buttonRefreshRegisters";
-    this->buttonRefreshRegisters->Size = System::Drawing::Size(100, 35);
-    this->buttonRefreshRegisters->TabIndex = 2;
-    this->buttonRefreshRegisters->Text = L"Обновить";
-    this->buttonRefreshRegisters->UseVisualStyleBackColor = true;
-    this->buttonRefreshRegisters->Click += gcnew System::EventHandler(this, &ModbusMasterForm::buttonRefreshRegisters_Click);
-    // 
-    // buttonStartAutoUpdate
-    // 
-    this->buttonStartAutoUpdate->Location = System::Drawing::Point(367, 92);
-    this->buttonStartAutoUpdate->Name = L"buttonStartAutoUpdate";
-    this->buttonStartAutoUpdate->Size = System::Drawing::Size(120, 35);
-    this->buttonStartAutoUpdate->TabIndex = 3;
-    this->buttonStartAutoUpdate->Text = L"Автообновление ВКЛ";
-    this->buttonStartAutoUpdate->UseVisualStyleBackColor = true;
-    this->buttonStartAutoUpdate->Click += gcnew System::EventHandler(this, &ModbusMasterForm::buttonStartAutoUpdate_Click);
-    // 
-    // buttonStopAutoUpdate
-    // 
-    this->buttonStopAutoUpdate->Enabled = false;
-    this->buttonStopAutoUpdate->Location = System::Drawing::Point(493, 92);
-    this->buttonStopAutoUpdate->Name = L"buttonStopAutoUpdate";
-    this->buttonStopAutoUpdate->Size = System::Drawing::Size(120, 35);
-    this->buttonStopAutoUpdate->TabIndex = 4;
-    this->buttonStopAutoUpdate->Text = L"Автообновление ВЫКЛ";
-    this->buttonStopAutoUpdate->UseVisualStyleBackColor = true;
-    this->buttonStopAutoUpdate->Click += gcnew System::EventHandler(this, &ModbusMasterForm::buttonStopAutoUpdate_Click);
-    // 
     // buttonSendChanges
     // 
     this->buttonSendChanges->Enabled = false;
@@ -474,15 +483,6 @@ void ModbusMasterForm::InitializeComponent()
     this->buttonSendChanges->Text = L"Отправить изменения";
     this->buttonSendChanges->UseVisualStyleBackColor = true;
     this->buttonSendChanges->Click += gcnew System::EventHandler(this, &ModbusMasterForm::buttonSendChanges_Click);
-    // 
-    // labelAutoUpdateStatus
-    // 
-    this->labelAutoUpdateStatus->AutoSize = true;
-    this->labelAutoUpdateStatus->Location = System::Drawing::Point(11, 97);
-    this->labelAutoUpdateStatus->Name = L"labelAutoUpdateStatus";
-    this->labelAutoUpdateStatus->Size = System::Drawing::Size(232, 20);
-    this->labelAutoUpdateStatus->TabIndex = 5;
-    this->labelAutoUpdateStatus->Text = L"Автообновление: выключено";
     // 
     // groupBoxRegisters
     // 
@@ -1653,11 +1653,6 @@ void ModbusMasterForm::UpdateRegistersData()
 {
     UpdateFullRegistersTable();
     UpdateParametersTable();
-
-    if (!isAutoUpdating)
-    {
-        ClearChangedRegisters();
-    }
 }
 
 void ModbusMasterForm::UpdateFullRegistersTable()
